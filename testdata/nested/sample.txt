@@ -1,0 +1,4 @@
+INFO Starting service
+INFO Listening on port 8080
+WARN Cache miss
+ERROR Timeout occurred

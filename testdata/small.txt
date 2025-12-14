@@ -1,0 +1,5 @@
+Hello World!
+This is a test file.
+Compression tools should reduce repeated text.
+Compression tools should reduce repeated text.
+Compression tools should reduce repeated text.
