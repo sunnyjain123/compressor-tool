@@ -13,7 +13,7 @@ This README walks you through **every supported way to install and use the tool*
 
 ## ✨ Features
 
-* Compress files to `.zip`
+* Compress files to `.zip` and `.gzip`, default is `.zip`
 * Decompress back to original filename and extension
 * Clean CLI interface
 * No external dependencies
@@ -155,6 +155,12 @@ go build -o compress-go-tool
 ./compress-go-tool --help
 ```
 
+```bash
+  -d bool decompress file
+  -f string
+        compression format: gz | zip (default "zip")
+```
+
 ---
 
 ## 📂 Usage
@@ -162,13 +168,13 @@ go build -o compress-go-tool
 ### Compress a file
 
 ```bash
-compress-go-tool compress example.txt
+compress-go-tool -f gz example.txt
 ```
 
 Creates:
 
 ```
-example.txt.zip
+example.txt.gz
 ```
 
 ---
@@ -176,7 +182,7 @@ example.txt.zip
 ### Decompress a file
 
 ```bash
-compress-go-tool decompress example.txt.zip
+compress-go-tool -d -f gz example.txt.gz
 ```
 
 Restores:
@@ -200,14 +206,6 @@ example.txt
 * Homebrew verifies SHA256 checksums
 * Releases are immutable
 * No runtime downloads
-
----
-
-## 📄 Release Process
-
-For maintainers, see:
-
-➡️ **RELEASING.md**
 
 ---
 

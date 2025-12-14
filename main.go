@@ -11,7 +11,7 @@ import (
 
 func main() {
 	decompress := flag.Bool("d", false, "decompress file")
-	format := flag.String("f", "gzip", "compression format: gz | zip")
+	format := flag.String("f", "zip", "compression format: gz | zip")
 	flag.Parse()
 
 	if flag.NArg() != 1 {
