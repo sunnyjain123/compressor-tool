@@ -9,7 +9,7 @@ This project accompanies the article:
 
 ## Features
 
-* Compress files into `.zip`
+* Compress files into `.zip` and `.gz`
 * Decompress files back to original name and extension
 * Sensible defaults (no output flags required)
 * Universal macOS binaries (Intel + Apple Silicon)
@@ -123,35 +123,116 @@ go build -o compress-go-tool
 
 ---
 
-### Build macOS Universal Binary (Intel + Apple Silicon)
+## Releasing & Updating Homebrew (Maintainers)
+
+This section is intended for **maintainers**, not end users.
+
+The release flow is:
+
+1. Build binaries
+2. Create a GitHub release
+3. Update the Homebrew formula
+
+---
+
+### Step 1: Create Release Binaries
+
+Ensure you have taken a fork are on a clean main branch:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+Build macOS universal binary:
 
 ```bash
 # Build ARM64
-GOOS=darwin GOARCH=arm64 go build -o compress-go-tool-arm64
+GOOS=darwin GOARCH=arm64 go build -o build/compress-go-tool-arm64
 
 # Build AMD64
-GOOS=darwin GOARCH=amd64 go build -o compress-go-tool-amd64
+GOOS=darwin GOARCH=amd64 go build -o build/compress-go-tool-amd64
 
 # Merge into universal binary
 lipo -create \
-  compress-go-tool-arm64 \
-  compress-go-tool-amd64 \
-  -output compress-go-tool
+  build/compress-go-tool-arm64 \
+  build/compress-go-tool-amd64 \
+  -output build/compress-go-tool
 ```
 
 Verify:
 
 ```bash
-lipo -info compress-go-tool
+lipo -info build/compress-go-tool
+```
+
+Create archives:
+
+```bash
+tar -czf compress-go-tool-darwin-universal.tar.gz compress-go-tool
+```
+
+Generate SHA256:
+
+```bash
+shasum -a 256 compress-go-tool-darwin-universal.tar.gz
+```
+---
+
+### Step 2: Create GitHub Release
+
+1. Go to **GitHub → Releases → New Release**
+2. Tag version (example: `v1.1.0`)
+3. Upload release assets:
+   * `compress-go-tool-darwin-universal.tar.gz`
+4. Publish the release
+
+These assets will be consumed by Homebrew.
+
+---
+
+### Step 3: Update Homebrew Formula
+
+Edit the formula in your tap (you can create a fork from https://github.com/sunnyjain123/homebrew-compress-go-tool):
+
+```bash
+cd homebrew-compress-go-tool
+vim Formula/compress-go-tool.rb
+```
+
+Update:
+
+* `url` → GitHub release asset URL
+* `sha256` → value generated above
+* `version` → new version
+
+Example:
+
+```ruby
+url "https://github.com/sunnyjain123/compress-go-tool/releases/download/v1.1.0/compress-go-tool-darwin-universal.tar.gz"
+sha256 "<SHA256_VALUE>"
+version "1.1.0"
+```
+
+Commit and push:
+
+```bash
+git add .
+git commit -m "compress-go-tool v1.1.0"
+git push origin main
 ```
 
 ---
 
-### Build Linux Binary
+### Step 4: Verify Homebrew Install
 
 ```bash
-GOOS=linux GOARCH=amd64 go build -o compress-go-tool-linux
+brew update
+brew upgrade compress-go-tool
+compress-go-tool --version
 ```
+
+Once verified, the release is live.
 
 ---
 

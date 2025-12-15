@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	format := flag.String("f", "zip", "compression format: gz | zip")
 	flag.Parse()
 	// examples if someone does not provide any args
 	if flag.NArg() != 1 {
@@ -22,10 +23,11 @@ func main() {
 
 	// Get input file path
 	input := flag.Arg(0)
-	decompress, format := getFormatAndMethod(input)
+	var decompress bool
+	decompress, format = getFormatAndMethod(input, format)
 
 	var c compressor.Compressor
-	switch format {
+	switch *format {
 	case "zip":
 		c = &compressor.ZipCompressor{}
 	case "gz":
@@ -52,8 +54,7 @@ func main() {
 }
 
 // Get format and method based on input file
-func getFormatAndMethod(inputFile string) (bool, string) {
-	format := flag.String("f", "zip", "compression format: gz | zip")
+func getFormatAndMethod(inputFile string, format *string) (bool, *string) {
 	flag.Parse()
 
 	decompress := false
@@ -67,5 +68,5 @@ func getFormatAndMethod(inputFile string) (bool, string) {
 		*format = "zip"
 	}
 
-	return decompress, *format
+	return decompress, format
 }
