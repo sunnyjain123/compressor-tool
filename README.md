@@ -1,64 +1,51 @@
 # compress-go-tool
 
-A simple, fast **file compression & decompression CLI** written in Go.
+A simple, user-friendly file compression CLI written in Go, focused not just on working code — but on **being easy to install, use, upgrade, and uninstall**.
 
-* ✅ macOS support (Intel + Apple Silicon)
-* ✅ Single binary
-* ✅ Homebrew install
-* ✅ Manual install via script
-
-This README walks you through **every supported way to install and use the tool**, step by step.
+This project accompanies the article:
+**“How to Not Just Build Software, but Make It Easy to Use”**
 
 ---
 
-## ✨ Features
+## Features
 
-* Compress files to `.zip` and `.gzip`, default is `.zip`
-* Decompress back to original filename and extension
-* Clean CLI interface
-* No external dependencies
+* Compress files into `.zip`
+* Decompress files back to original name and extension
+* Sensible defaults (no output flags required)
+* Universal macOS binaries (Intel + Apple Silicon)
+* Multiple installation options (Homebrew, install script, source build)
+* Zero runtime dependencies
 
 ---
 
-## 📦 Prerequisites
+## Prerequisites (For Building From Source)
 
-* macOS
-* Go (only required for building from source)
+If you only want to **use** the tool via Homebrew, you can skip this section.
 
-Check Go:
+### Install Go
+
+Install Go from the official website:
+
+👉 [https://go.dev/dl/](https://go.dev/dl/)
+
+Verify installation:
 
 ```bash
 go version
 ```
 
----
+You’ll also need:
 
-## 🚀 Option 1: Install via Homebrew (Recommended)
-
-This is the **best and easiest way** for most users.
-
-### Step 1: Install Homebrew (if not installed)
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-Add Homebrew to PATH (Apple Silicon Macs):
-
-```bash
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
-```
-
-Verify:
-
-```bash
-brew --version
-```
+* Git
+* macOS
 
 ---
 
-### Step 2: Install compress-go-tool
+## Installation Options
+
+### Option 1: Homebrew (Recommended for End Users)
+
+This is the easiest and cleanest way to install.
 
 ```bash
 brew tap sunnyjain123/compress-go-tool
@@ -71,16 +58,13 @@ Verify:
 compress-go-tool --help
 ```
 
----
-
-### Upgrade
+Upgrade:
 
 ```bash
-brew update
 brew upgrade compress-go-tool
 ```
 
-### Uninstall
+Uninstall:
 
 ```bash
 brew uninstall compress-go-tool
@@ -88,33 +72,18 @@ brew uninstall compress-go-tool
 
 ---
 
-## 🛠 Option 2: Install via install.sh (Manual)
+### Option 2: Install Script (Developer-Friendly)
 
-Use this if you don’t want Homebrew.
-
-### Step 1: Clone the repo
+This option is useful if you want to inspect the code or experiment locally.
 
 ```bash
 git clone https://github.com/sunnyjain123/compress-go-tool.git
 cd compress-go-tool
-```
-
----
-
-### Step 2: Run install script
-
-```bash
 chmod +x install.sh
 ./install.sh
 ```
 
-This installs the binary to:
-
-```
-/usr/local/bin/compress-go-tool
-```
-
-Verify:
+After installation:
 
 ```bash
 compress-go-tool --help
@@ -122,26 +91,31 @@ compress-go-tool --help
 
 ---
 
-### Uninstall
-
-```bash
-sudo rm /usr/local/bin/compress-go-tool
-```
-
----
-
-## 🧑‍💻 Option 3: Build From Source
-
-### Step 1: Clone
+### Option 3: Build From Source (Manual)
 
 ```bash
 git clone https://github.com/sunnyjain123/compress-go-tool.git
 cd compress-go-tool
+go build -o compress-go-tool
+```
+
+Run locally:
+
+```bash
+./compress-go-tool file.txt
+```
+
+(Optional) Install globally:
+
+```bash
+sudo mv compress-go-tool /usr/local/bin/
 ```
 
 ---
 
-### Step 2: Build
+## Creating Binaries (For Maintainers / Releases)
+
+### Build for Current Platform
 
 ```bash
 go build -o compress-go-tool
@@ -149,71 +123,76 @@ go build -o compress-go-tool
 
 ---
 
-### Step 3: Run
+### Build macOS Universal Binary (Intel + Apple Silicon)
 
 ```bash
-./compress-go-tool --help
+# Build ARM64
+GOOS=darwin GOARCH=arm64 go build -o compress-go-tool-arm64
+
+# Build AMD64
+GOOS=darwin GOARCH=amd64 go build -o compress-go-tool-amd64
+
+# Merge into universal binary
+lipo -create \
+  compress-go-tool-arm64 \
+  compress-go-tool-amd64 \
+  -output compress-go-tool
 ```
 
+Verify:
+
 ```bash
-  -f string
-        compression format: gz | zip (default "zip")
+lipo -info compress-go-tool
 ```
 
 ---
 
-## 📂 Usage
-
-### Compress a file
+### Build Linux Binary
 
 ```bash
-compress-go-tool -f gz example.txt
+GOOS=linux GOARCH=amd64 go build -o compress-go-tool-linux
+```
+
+---
+
+## Usage
+
+### Compress a File
+
+```bash
+compress-go-tool example.txt
 ```
 
 Creates:
 
-```
-example.txt.gz
+```text
+example.txt.zip
 ```
 
 ---
 
-### Decompress a file
+### Decompress a File
 
 ```bash
-compress-go-tool -d -f gz example.txt.gz
+compress-go-tool example.txt.zip
 ```
 
 Restores:
 
-```
+```text
 example.txt
 ```
 
 ---
 
-## 🧠 Design Notes
+## Related Article
 
-* Output filenames are auto-generated
-* Original filename and extension are preserved
-* Avoids conflicts with system binaries (`compress`)
+📖 **How to Not Just Build Software, but Make It Easy to Use**
 
----
-
-## 🔐 Security & Trust
-
-* Homebrew verifies SHA256 checksums
-* Releases are immutable
-* No runtime downloads
+[https://medium.com/@jain.sunny301/how-to-not-just-build-software-but-make-it-easy-to-use-f5f2ed03984d](https://medium.com/@jain.sunny301/how-to-not-just-build-software-but-make-it-easy-to-use-f5f2ed03984d)
 
 ---
 
-## 🤝 Contributing
-
-PRs and issues are welcome.
-
----
-
-## 📜 License
+## License
 
 MIT License
